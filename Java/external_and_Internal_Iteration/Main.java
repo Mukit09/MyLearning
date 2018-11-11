@@ -86,6 +86,15 @@ public class Main {
 				sendMail(person.getMailId());
 			}
 		});
+		
+		// internal iteration using lambda expression with parallel processing
+		persons.stream()
+			.parallel()
+			.forEach(person -> {
+				if(person.getJobTitle().contains("Software")) {
+					sendMail(person.getMailId());
+				}
+			});
 	}
 
 	private static void sendMail(String mailId) {
