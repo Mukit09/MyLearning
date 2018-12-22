@@ -1,9 +1,10 @@
 package com.mukit.stream;
 
+import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.*;
 
 public class StreamDemo {
     private static List<Person> getPersonList() {
@@ -95,6 +96,55 @@ public class StreamDemo {
                 .collect(Collectors.joining(", "));
         System.out.println(joinedString1);
 
+        // multiplication of 7 upto 10 using map and range
+        System.out.println("multiplication of 7 upto 10 using map and range.......");
+        int table = 7;
+        IntStream.range(1, 11)
+                .mapToObj(value -> String.format("%d x %d = %d", table, value, value * table))
+                .forEach(line -> System.out.println(line));
+
+        // sum using range and sum
+        System.out.println("sum using range and map.......");
+        long sum = LongStream.range(1, 10)
+                .sum();
+        System.out.println("Sum is: " + sum);
+
+        //findFirst
+        System.out.println("findFirst.......");
+        OptionalInt first = IntStream.range(1, 100)
+                .filter(value -> value % 5 == 0)
+                .map(value -> value * 5)
+                .findFirst();
+        if(first.isPresent())
+            System.out.println(first.getAsInt());
+
+        //findFirst in persons list
+        System.out.println("findFirst in persons list.......");
+        Optional<Person> first1 = persons.stream()
+                .peek(person -> System.out.println("first peek " + person.getName() + " " + person.getAge()))
+                .filter(person -> person.getAge() > 28)
+                .peek(person -> System.out.println("second peek " + person.getName() + " " + person.getAge()))
+                .findFirst();
+        if(first1.isPresent()) {
+            Person firstPerson = first1.get();
+            System.out.println(firstPerson.getName() + " " + firstPerson.getAge());
+        }
+
+        //findAny
+        System.out.println("findAny.......");
+        OptionalInt any = IntStream.range(1, 10)
+                .filter(value -> value % 5 == 0)
+                .map(value -> value * 5)
+                .findAny();
+        if(any.isPresent())
+            System.out.println(any.getAsInt());
+
+        //using generate
+        System.out.println("using generate.......");
+        Stream<UUID> generate = Stream.generate(() -> UUID.randomUUID());
+        generate.limit(10)
+                .forEach(str -> System.out.println(str));
+
         // Count stream result of person older than 30
         System.out.println("Count stream result of person older than 30.......");
         long count1 = persons.stream()
@@ -104,19 +154,69 @@ public class StreamDemo {
 
         // use of dropwhile
         System.out.println("use of dropwhile.......");
-        // drop as long as possible, if condition is false
+        // drop till condition is false
         // then start taking
-        IntStream.range(1, 10)
+        String collect1 = IntStream.range(1, 10)
                 .dropWhile(value -> value < 4)
-                .forEach(value -> System.out.println(value));
+                .mapToObj(i -> ((Integer) i).toString())
+                .collect(Collectors.joining(", "));
+        System.out.println(collect1);
+
+        System.out.println("takeWhile for unordered list......");
+        String s1 = IntStream.of(1, 10, 9, 20, 5, 4, 3, 2, 12)
+                .dropWhile(i -> i < 12)
+                .mapToObj(i -> ((Integer) i).toString())
+                .collect(Collectors.joining(", "));
+        System.out.println(s1);
+
+        Stream.of("a", "b", "c", "", "d")
+                .dropWhile(s -> !s.isEmpty())
+                .forEach(s -> System.out.println(s));
 
         // use of takewhile
         System.out.println("use of takewhile");
         // take as long as possible, if condition is false
         // then break the loop, as you aren't taking anymore
-        IntStream.range(1, 10)
+        String collect2 = IntStream.range(1, 10)
                 .takeWhile(value -> value < 4)
-                .forEach(value -> System.out.println(value));
+                .mapToObj(i -> ((Integer) i).toString())
+                .collect(Collectors.joining(", "));
+        System.out.println(collect2);
+
+        String collect3 = IntStream.of(10, 3, 2, 1, 12, 5, 100)
+                .takeWhile(i -> i < 7)
+                .mapToObj(i -> ((Integer) i).toString())
+                .collect(Collectors.joining(", "));
+        System.out.println("output found: " + collect3);
+
+        // count frequency of each unique character in a string
+        System.out.println("count frequency of each unique character in a string.......");
+        String test = "testing";
+        LinkedHashMap<String, Long> collect4 = Arrays.stream(test.split(""))
+                .map(s -> s.toLowerCase())
+                .collect(Collectors.groupingBy(s -> s, LinkedHashMap::new, Collectors.counting()));
+        System.out.println(collect4);
+        // in brief of previous one
+        LinkedHashMap<String, Long> collect5 = Arrays.stream(test.split(""))
+                .map(s -> s.toLowerCase())
+                .collect(Collectors.groupingBy(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        return s;
+                    }
+                }, new Supplier<LinkedHashMap<String, Long>>() {
+                    @Override
+                    public LinkedHashMap<String, Long> get() {
+                        return new LinkedHashMap<String, Long>();
+                    }
+                }, Collectors.counting()));
+
+        // String Length Wise Collect using groupingBy
+        System.out.println("String Length Wise Collect using groupingBy.......");
+        List<String> strings = List.of("a", "bb", "cc", "ddd");
+        LinkedHashMap<Integer, List<String>> lengthWiseCollectAsList = strings.stream()
+                .collect(Collectors.groupingBy(String::length, LinkedHashMap::new, Collectors.toList()));
+        System.out.println(lengthWiseCollectAsList);
 
         // sorting with stream
         System.out.println("sorting with stream.......");
