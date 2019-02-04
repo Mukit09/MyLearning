@@ -218,6 +218,71 @@ public class StreamDemo {
                 .collect(Collectors.groupingBy(String::length, LinkedHashMap::new, Collectors.toList()));
         System.out.println(lengthWiseCollectAsList);
 
+        //stream operation on hashmap
+        System.out.println("stream operation on hashmap.......");
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        hashMap.put("mukit", 28);
+        hashMap.put("rahat", 30);
+        hashMap.put("zitu", 32);
+        hashMap.put("sakib", 29);
+        hashMap.put("tareq", 31);
+        hashMap.put("shihab", 40);
+        Set<Map.Entry<String, Integer>> entries = hashMap.entrySet();
+        entries.forEach(entry -> System.out.println(entry.getKey() + " " + entry.getValue()));
+        System.out.println(entries);
+        LinkedHashMap<String, Integer> collect6 = entries.stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .peek(value -> System.out.println("value is " + value))
+                .limit(3)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (eq, e2) -> e2, LinkedHashMap::new));
+        System.out.println(collect6);
+
+        // key and value extract
+        System.out.println("key and value extract.......");
+        hashMap.entrySet()
+                .stream()
+                .map(object -> object.getKey() + " " + object.getValue())
+                .forEach(string -> System.out.println(string));
+
+        HashMap<String, Person> map1 = new HashMap<>();
+        map1.put("mukit", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 28));
+        map1.put("rahat", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 30));
+        map1.put("zitu", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 32));
+        map1.put("sakib", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 29));
+        map1.put("tareq", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 31));
+        map1.put("shihab", new Person("Mukit Chowdhury", "Software Engineer",
+                "mukit@ssd-tech.com", 40));
+
+        LinkedHashMap<String, Person> collect7 = map1.entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().getAge() - e1.getValue().getAge())
+                .peek(value -> System.out.println("value is " + value))
+                .limit(3)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (eq, e2) -> e2, LinkedHashMap::new));
+        System.out.println(collect7);
+
+        System.out.println("Map to list with stream.......");
+        List< Person> collect8 = map1.entrySet()
+                .stream()
+                .sorted((e1, e2) -> (int) (e2.getValue().getAge() - e1.getValue().getAge()))
+                .limit(10)
+                .map(object -> object.getValue())
+                .collect(Collectors.toList());
+        System.out.println(collect8);
+
+        //mapped object value to string
+        System.out.println("mapped object value to string...........");
+        String collect9 = map1.entrySet()
+                .stream()
+                .map(mapObject -> mapObject.getValue().toString())
+                .collect(Collectors.joining(","));
+        System.out.println(collect9);
+
         // sorting with stream
         System.out.println("sorting with stream.......");
         List<Person> collect = persons.stream()
@@ -233,10 +298,25 @@ public class StreamDemo {
             System.out.println(person.getName() + " " + person.getAge());
         }
 
+        List<Double[]> splitList = new ArrayList<>();
+        Double[] tmp1 = { 78d, 100d, 0d };
+        Double[] tmp2 = { 78d, 100d, 1d };
+        Double[] tmp3 = { 0d, 100d, 0d };
+        Double[] tmp4 = { 104d, 100d, 1d };
+        splitList.add(tmp1);
+        splitList.add(tmp2);
+        splitList.add(tmp3);
+        splitList.add(tmp4);
+
+        splitList.stream()
+                .sorted(Comparator.comparing((Double[] array) -> array[0])
+                        .thenComparing(Comparator.comparing((Double[] array2) -> array2[2]).reversed()))
+                .forEach(array -> System.out.println(Arrays.toString(array)));
+
         // Another way of sorting
         System.out.println("Another way of sorting.......");
         persons.stream()
-                .sorted(Comparator.comparing(Person::getAge))
+                .sorted(Comparator.comparing(person1 -> person1.getAge()))
                 .collect(Collectors.toList());
         for (Person person : collect) {
             System.out.println(person.getName() + " " + person.getAge());
