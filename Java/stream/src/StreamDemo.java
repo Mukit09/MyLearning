@@ -255,7 +255,7 @@ public class StreamDemo {
         map1.put("mukit", new Person("Mukit Chowdhury", "Software Engineer",
                 "mukit@ssd-tech.com", 28));
         map1.put("rahat", new Person("Mukit Chowdhury", "Software Engineer",
-                "mukit@ssd-tech.com", 30));
+                "mukit@reddotdigitalit.com", 30));
         map1.put("zitu", new Person("Mukit Chowdhury", "Software Engineer",
                 "mukit@ssd-tech.com", 32));
         map1.put("sakib", new Person("Mukit Chowdhury", "Software Engineer",
