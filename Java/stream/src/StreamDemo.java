@@ -26,6 +26,15 @@ public class StreamDemo {
     }
 
     public static void main(String[] args) {
+
+        // Sorting List of Integer String after converting to int and store it in array
+        List<String> list = List.of("32", "12", "345", "344", "1");
+        int[] ints = list.stream()
+                .mapToInt(st -> Integer.parseInt(st))
+                .sorted()
+                .toArray();
+        Arrays.stream(ints).forEach(i-> System.out.println(i));
+
         List<Person> persons = getPersonList();
 
         // get stream of person whose age greater than 30 and print
